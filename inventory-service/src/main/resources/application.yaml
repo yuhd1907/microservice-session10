@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: inventory-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pharmacy_db
+    username: pharmacy
+    password: pharmacy123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: inventory-group
+      auto-offset-reset: earliest
+      # Giải tuần tự hóa Key từ dạng String
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+      # Giải tuần tự hóa Value từ JSON về Object
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        # Cấu hình các package được phép giải tuần tự hóa (để bảo mật)
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: ra.edu.inventoryservice.event.OrderEvent
+
+server:
+  port: 8081
+
+app:
+  kafka:
+    topic:
+      medicine-stock-events: medicine-stock-events

@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: notification-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pharmacy_db
+    username: pharmacy
+    password: pharmacy123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification-group
+      auto-offset-reset: earliest
+      # Giải tuần tự hóa Key từ dạng String
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+      # Giải tuần tự hóa Value từ JSON về Object
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        # Cấu hình các package được phép giải tuần tự hóa (để bảo mật)
+        # "*" cho phép tất cả các class, hoặc bạn có thể chỉ định cụ thể như "com.example.dto.*"
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: ra.edu.notificationservice.event.OrderEvent
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:your-email@gmail.com}
+    password: ${MAIL_PASSWORD:your-app-password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+server:
+  port: 8082
+
+app:
+  kafka:
+    topic:
+      medicine-stock-events: medicine-stock-events
+  notification:
+    customer-email: ${CUSTOMER_EMAIL:customer@example.com}

@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: pharmacy-service
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      # Sử dụng StringSerializer cho Key
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+      # Sử dụng JsonSerializer của Spring để tự động chuyển Object sang JSON
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+server:
+  port: 8080
+
+app:
+  kafka:
+    topic:
+      medicine-stock-events: medicine-stock-events
